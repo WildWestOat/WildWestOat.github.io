@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WildWestOat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="brand"><a href="./"><span class="w1">W</span>ild<span class="w2">W</span>est<span class="o">O</span>at</a></p>
+    <nav>
+      <a href="./">Posts</a>
+      <a href="about.html">About</a>
+      <a href="https://github.com/WildWestOat">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="post-header">
+    <h1 id="title">…</h1>
+    <p class="meta" id="meta"></p>
+  </div>
+
+  <article id="content"><p class="loading">Loading…</p></article>
+
+  <footer class="foot">
+    <span>&copy; <span data-year></span> Yutthana (Oat) Boonpalit</span>
+    <span><a href="./">&larr; All posts</a></span>
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+<script src="js/site.js"></script>
+<script>
+(async function () {
+  const content = document.getElementById('content');
+  const slug = new URLSearchParams(location.search).get('p');
+
+  if (!slug || !/^[A-Za-z0-9._-]+$/.test(slug)) {
+    document.getElementById('title').textContent = 'Post not found';
+    content.innerHTML = '<p class="error">No post specified. <a href="./">Back to all posts</a>.</p>';
+    return;
+  }
+
+  const url = `${BLOG_DIR}/${slug}.md`;
+  try {
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+    const { meta, body } = parseFrontMatter(await res.text());
+    const title = meta.title || slug;
+
+    document.title = `${title} — WildWestOat`;
+    document.getElementById('title').textContent = title;
+    document.getElementById('meta').innerHTML =
+      escapeHtml(formatDate(meta.date)) + tagsHtml(meta.tags) +
+      ` &middot; <a href="${escapeHtml(url)}">source</a>`;
+
+    if (typeof marked === 'undefined') {
+      throw new Error('the Markdown renderer failed to load');
+    }
+    marked.setOptions({ gfm: true, breaks: false });
+    content.innerHTML = marked.parse(body);
+  } catch (err) {
+    document.getElementById('title').textContent = 'Post not found';
+    content.innerHTML =
+      `<p class="error">Could not load <code>${escapeHtml(url)}</code> (${escapeHtml(err.message)}).</p>`;
+  }
+})();
+</script>
+</body>
+</html>

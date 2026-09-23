@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WildWestOat</title>
+<meta name="description" content="Notes and writing by Oat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="brand"><a href="./"><span class="w1">W</span>ild<span class="w2">W</span>est<span class="o">O</span>at</a></p>
+    <nav>
+      <a href="./">Posts</a>
+      <a href="about.html">About</a>
+      <a href="https://github.com/WildWestOat">GitHub</a>
+    </nav>
+  </header>
+
+  <section class="intro">
+    <p>Writing about code, systems, and whatever else is on the bench.</p>
+  </section>
+
+  <main id="posts"><p class="loading">Loading posts…</p></main>
+
+  <footer class="foot">
+    <span>&copy; <span data-year></span> Yutthana (Oat) Boonpalit</span>
+  </footer>
+
+</div>
+
+<script src="js/site.js"></script>
+<script>
+  fetchPostList()
+    .then((posts) => renderPostList(document.getElementById('posts'), posts))
+    .catch((err) => {
+      document.getElementById('posts').innerHTML =
+        '<p class="error">Could not load posts: ' + escapeHtml(err.message) + '</p>';
+    });
+</script>
+</body>
+</html>
