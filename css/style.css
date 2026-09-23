@@ -8,6 +8,10 @@
   --max: 46rem;
   --heading: #E74100;
   --text: #222224;
+  --brand: #222224;
+  --brand-w1: #E74100;
+  --brand-w2: #B10000;
+  --brand-o: #412442;
   --font-serif: ui-serif, Georgia, "Times New Roman", serif;
   --font-sans: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -21,6 +25,10 @@
     --rule: #2d2c26;
     --accent: #f0eee7;
     --code-bg: #1e1d18;
+    --text: #ffffff;
+    --brand: #f0eee7;
+    --brand-w2: #e0473a;
+    --brand-o: #b98bba;
   }
 }
 
@@ -64,11 +72,11 @@ a:hover { text-decoration-style: dotted; }
   font-size: 1.75rem;
   letter-spacing: -0.02em;
 }
-.masthead .brand a { color: #222224; text-decoration: none; }
+.masthead .brand a { color: var(--brand); text-decoration: none; }
 .brand .w1, .brand .w2, .brand .o { font-weight: 700; }
-.brand .w1 { color: #E74100; }
-.brand .w2 { color: #B10000; }
-.brand .o  { color: #412442; }
+.brand .w1 { color: var(--brand-w1); }
+.brand .w2 { color: var(--brand-w2); }
+.brand .o  { color: var(--brand-o); }
 .masthead nav { display: flex; gap: 1.5rem; font-size: 1.0625rem; }
 
 /* intro */
