@@ -45,12 +45,9 @@ Behind the success of LLMs is an architecture called the **Transformer** (not
 the robot cars), introduced in the paper
 [*Attention Is All You Need*](https://arxiv.org/abs/1706.03762).
 
-Why is it so important? To give you a brief idea: in the NLP world, researchers
-had long been looking for ways to make AI generate a proper response to a
-specific interaction (a prompt from a user). The authors of this paper came up
-with the idea of **attention** — letting the model pay attention to the context
-of the question, so it generates an answer based on probabilities *and* the
-context of the prompt.
+Why is it so important? Before Transformers, language models (RNNs and LSTMs) read text one word at a time, passing a kind of running summary along the way. That made them slow to train and prone to "forgetting" things from earlier in a long text.
+
+The idea of attention already existed, but this paper showed you could build a whole model out of it. With self-attention, every token can look at every other token in the input and decide how much each one matters. In "The cat sat on the mat because it was tired," attention helps the model link it to cat. Because this happens for all tokens at once, Transformers train in parallel on GPUs, and that's a big reason LLMs could scale up.
 
 You don't have to read the whole paper, but you should understand its core idea
 to understand how an LLM works.
@@ -72,14 +69,17 @@ Before you get overwhelmed, remember: you don't have to understand everything at
 once. These are the topics to focus on:
 
 - **LLM architecture** — what it looks like, especially the inference part.
-- **Weights, activation functions, and biases** — good to know, but don't get
-  too serious about them yet; they matter more for training.
+- **Linear algebra**: without it, there's no LLM. At minimum, understand
+  **vectors**, the **dot product**, and **matrix multiplication**. These terms
+  come up constantly: a token's embedding is a vector, attention scores come
+  from dot products between Q and K, and almost everything a GPU does during
+  inference is matrix multiplication.
+  ([3Blue1Brown — Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab))
+- **Weights, activation functions, and biases** — know what they are, but skip how they're trained (backprop, optimizers). For inference, what matters is their size: weights take up most of the GPU memory, and they're read on every generated token. That's why decoding is usually memory-bound, and why tricks like quantization (e.g. FP8, INT4) help.
 - **Tokenizers** — how an LLM treats its inputs.
 - **Embeddings, vocabulary, and n-grams.**
 - **Q, K, V** (query, key, value) — again, especially for inference.
-- **The attention mechanism** and what it has to do with the KV cache. Don't
-  confuse it with vLLM's *PagedAttention* — they're completely different
-  things.
+- **The attention mechanism** and how it creates the KV cache. Don't mistake vLLM's PagedAttention for a new kind of attention. The math is the same; PagedAttention is about memory management. It stores the KV cache in small fixed-size blocks (like pages in an operating system) instead of one big chunk per request, so less GPU memory is wasted and more requests fit at once. It might be a good idea to brush up Operating System book, as it is inspired from OS memory management.
 - **The KV cache** — what it is, and where Q fits in (again, focus on
   inference).
 
@@ -141,7 +141,7 @@ the rest of the reading to you.
 I recommend reading these posts, or any other benchmarks you find, to get an
 idea of what to look for when optimizing and tuning system performance:
 
-- [Qwen3.8 PD serving](https://vllm.ai/blog/2026-09-21-qwen38-pd-serving) — I strongly recommend this one.
+- [Qwen3.8 PD serving](https://vllm.ai/blog/2026-09-21-qwen38-pd-serving) — I strongly recommend it, not for the numbers, but for the thought process. It shows what to figure out before you benchmark: how much KV cache memory you have, how many requests fit, and why prefill and decode are measured separately. Don't worry if the hardware details go over your head; focus on the "Maximizing Throughput" and "Measure prefill/decode performance" sections.
 - [vLLM Metal v0.28.0](https://vllm.ai/blog/2026-09-22-vllm-metal-v0-28-0)
 
 There's also a free book on inference engineering:
@@ -159,9 +159,8 @@ there, since many optimizations are done through parallelism.
 
 Thank you for reading my post! I hope it's useful enough to help someone who
 feels overwhelmed by vLLM. If I had to start again, I'd ask myself two
-questions: ***What knowledge do I need before using vLLM?*** and ***Why do I need
-vLLM in the first place?***
+questions: ***Why do I need vLLM in the first place?*** and ***What knowledge do I need before using vLLM?***
 
 I'll keep sharing my journey and writing useful posts, because I believe this
 knowledge should be free. Thanks to all the kind engineers out there who keep
-posting free knowledge on YouTube.
+posting free knowledge on the Internet.
